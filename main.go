@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -16,8 +17,9 @@ func main() {
 	}
 	defer file.Close()
 
-	// A slice holding 8 bytes of data from the file
 	buffer := make([]byte, 8)
+
+	currentLine := ""
 
 	// Loop to read every 8 bytes
 	for {
@@ -31,7 +33,17 @@ func main() {
 			return
 		}
 
-		// Print the 8 bytes as a string
-		fmt.Printf("read: %s\n", string(buffer[:n]))
+		parts := strings.Split(string(buffer[:n]), "\n")
+
+		// For each part, print a line to the console (except the last one)
+		for i := 0; i < len(parts) - 1; i++ {
+				fmt.Printf("read: %s\n", currentLine + parts[i])
+				currentLine = ""
+		}
+		currentLine += parts[len(parts)-1]
+	}
+
+	if currentLine != "" {
+		fmt.Printf("read: %s\n", currentLine)
 	}
 }
